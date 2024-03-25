@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3to14 Cards</title>
+    <link rel="icon" href="">
+    <script src="3to14.js" defer></script>
+    <link rel="styleSheet" href="3to14.css">
+    <!-- <style>
+        body{
+            overflow-y: hidden;
+            overflow-x: hidden;
+        }
+    </style> -->
+</head>
+<body>
+
+    <div id="infoDiv">
+        <!-- <h3>Information:</h3> -->
+
+    </div>
+    <div id="startDiv" class="start">
+        <div id="startButton">START</div>
+    </div>
+
+    <div id="cardDesign" class="card" hidden>
+
+        <div id="topRank">7</div>
+        <img src="hearts.png" alt="hearts" id="topSuit">
+
+        <div id="bottomRank">7</div>
+        <img src="hearts.png" alt="hearts" id="bottomSuit">
+
+    </div>
+
+    <div id="deckDiv" hidden>
+        <h3>The Deck</h3>
+
+    </div>
+    <div id="discardDiv" hidden>
+        <h3>Discard Pile</h3>
+        <div id="emptyDiscard"></div>
+    </div>
+    <div id="handDiv" hidden>
+        <h3>Your Cards</h3>
+
+    </div>
+    <div id="playersDiv" hidden>
+        <div style="padding: 10px;"><input id="viewScore" type="submit" value="See All Scores"></div>
+        <h3>Players:</h3> 
+        <table id="playersList">
+            
+        </table>
+
+    </div>
+
+    <div id="scoreBoard" hidden>
+        <table>
+            <caption><h1>Score Board</h1></caption>
+            <!-- <tr id="scoreHeader">
+                <th column-span="2" ><h1>Score Board</h1></th>
+            </tr> -->
+            <tr id="scorePlayer"><th>Players:</th></tr>
+            <tr id="round3"><th>3</th></tr>
+            <tr id="round4"><th>4</th></tr>
+            <tr id="round5"><th>5</th></tr>
+            <tr id="round6"><th>6</th></tr>
+            <tr id="round7"><th>7</th></tr>
+            <tr id="round8"><th>8</th></tr>
+            <tr id="round9"><th>9</th></tr>
+            <tr id="round10"><th>10</th></tr>
+            <tr id="round11"><th>J</th></tr>
+            <tr id="round12"><th>Q</th></tr>
+            <tr id="round13"><th>K</th></tr>
+            <tr id="round14"><th>A</th></tr>
+            <!-- <tr id="scoreBottom">
+                <th column-span="all"><input id="scoreSubmit" type="submit" value="Continue Playing"></th>
+            </tr> -->
+            
+        </table>
+        <div style="padding: 10px;"><input id="scoreSubmit" type="submit" value="Continue Playing"></div>
+    </div>
+
+    <div id="rules"></div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+
+
+.currentPage{
+    background-color: blue;
+}
+
+header{
+    text-align: center;
+}
+
+nav{
+    background-color: black;
+    padding: 25px;
+    
+}
+
+nav a{
+    color:white;
+    text-decoration: none;
+    padding: 25px;
+    font-size: 16px;
+}
+
+nav input{
+    float: right;
+    padding: 6px;
+}
+
+nav button{
+    float: right;
+    border-radius: 6px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-right: 10px;
+    background-color: rgb(34, 91, 165);
+    color: white;
+    border: none;
+    font-size: 17px;
+
+}
+
+button:hover{
+    cursor: pointer;
+}
+
+button:active{
+    background-color: blue;
+}
+
+#images img{
+    margin: 50px;
+    width: 250px;
+    display: block;
+}
+
+
+aside{
+    float: left;
+    margin: 30px;
+}
+
+#secondNav{
+    width: 250px;
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 10px;
+    margin-left: 30px;
+    
+    box-shadow: 5px 5px 2px lightblue;
+    
+}
+
+#secondNav a{
+    display: block;
+}
+
+main{
+    margin: 30px;
+    
+}
+
+footer{
+    clear: both;
+    border: 10px solid lightblue;
+    padding: 30px;
+    border-radius: 4px;
+    height: 200px;
+}
+
+footer a{
+    display: block;
+}
+
+#followUs{
+    float: right;
+
+}
+
+a img{
+    width: 30px;
+}
+
+form{
+    background-color: lightblue;
+    border-radius: 4px;
+    clear: both;
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+form > * {
+    padding: 5px;
+}
+
+form button{
+    background-color: rgb(30, 86, 190);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 10px;
+    margin: 10px;
+}
+
+#number{
+    margin-right: 58px;
+}
+
+#time{
+    margin-right: 32px;
+}
+
+#petName{
+    margin-right: 33px;
+}
+
+#petType{
+    margin-right: 27px;
+}
+
+#petAge{
+    margin-right: 21px;
+}
+
+input{
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    margin: 5px
+}
+
+form input:valid{
+    border: 2px solid rgb(30, 235, 30);
+}
+
+form input:invalid{
+    border: 2px solid red;
+}
