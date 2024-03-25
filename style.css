@@ -37,6 +37,13 @@ header{
     text-align: center;
     height: 85vh;
     margin: 0;
+    animation-name: fadeIn;
+    animation-duration: 5s;
+}
+
+@keyframes fadeIn {
+    from{opacity: 0;}
+    to{opacity: 1;}
 }
 
 main{
@@ -108,6 +115,10 @@ a:hover{
     100%{color: blue}
 }
 
+aside{
+    padding: 50px;
+    text-align: center;
+}
 
 
 
