@@ -43,12 +43,47 @@ function ProgressBarFunction(){
   progressBar.innerHTML = Math.trunc(barWidth) + "%";
 }
 
+
+function RainbowText() {
+  const rainbowColors = ['RED', 'ORANGE', 'YELLOW', 'GREEN', 'BLUE', 'INDIGO', 'VIOLET'];
+  let currColor = rainbowColors[0];
+  let colorIndex = 0;
+  const phrase = document.querySelector('p').innerHTML;
+  let currLetterIndex = 0;
+
+  setInterval(changeColor, 150);
+
+  function changeColor() {
+    let newString = document.createElement('p');
+    let substring1 = phrase.substring(0, currLetterIndex);
+    let currLetter = phrase.substring(currLetterIndex, currLetterIndex + 1);
+    let substring2 = phrase.substring(currLetterIndex + 1)
+
+    newString = `${substring1}<span style="color: ${currColor}">${currLetter}</span>${substring2}`;
+    document.querySelector('p').innerHTML = newString;
+
+    currLetterIndex++;
+    if (currLetterIndex >= phrase.length){
+      currLetterIndex = 0;
+    }
+    colorIndex++;
+    if (colorIndex >= rainbowColors.length){
+      colorIndex = 0;
+    };
+    currColor = rainbowColors[colorIndex];
+  }
+
+}
+
+
+
 window.addEventListener("DOMContentLoaded", loadedHandler);
 
 function loadedHandler() {  
 
   window.addEventListener('scroll', ProgressBarFunction);
 
+  RainbowText();
 
 }
 
