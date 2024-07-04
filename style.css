@@ -1,7 +1,7 @@
 html body{
     font-family: Lato, sans-serif;
     margin: 0;
-    border: 15px outset rgb(81, 173, 81);
+    /* border: 15px outset rgb(81, 173, 81); */
     border-radius: 10px;
 }
 
@@ -10,7 +10,7 @@ html body{
 }
 
 .resume{
-    font-size: 3vb;
+    font-size: 30px;
 }
 
 .ProjectImage {
@@ -35,7 +35,7 @@ html body{
 
 header{
     text-align: center;
-    height: 85vh;
+    height: 650px;
     margin: 0;
     animation-name: fadeIn;
     animation-duration: 5s;
@@ -48,13 +48,13 @@ header{
 
 main{
     text-align: center;
-    
+    padding: 50px;
 }
 
 h1{
     letter-spacing: 3px;
     font-weight: bold;
-    font-size: 8vb;
+    font-size: 80px;
     margin-bottom: 0;
 }
 
@@ -122,8 +122,20 @@ aside{
 
 
 
+#progressBar {
+    background: linear-gradient(to bottom right, blue, lightblue);
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    top: -10;
+    font-size: 10px;
+    padding: 5px;
+}
+
+
+
 @media screen and (max-width: 400px) {  
-    header {
-      height: 110vh;
+    h1{
+        font-size: 50px;
     }
 }
