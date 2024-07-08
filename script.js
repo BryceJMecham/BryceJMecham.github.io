@@ -54,9 +54,19 @@ function RainbowText() {
   setInterval(changeColor, 150);
 
   function changeColor() {
-    let newString = document.createElement('p');
-    let substring1 = phrase.substring(0, currLetterIndex);
+    let newString = '';
     let currLetter = phrase.substring(currLetterIndex, currLetterIndex + 1);
+
+    //Skip spaces
+    while (currLetter == ' '){
+      currLetterIndex++;
+      if (currLetterIndex >= phrase.length){
+        currLetterIndex = 0;
+      }
+      currLetter = phrase.substring(currLetterIndex, currLetterIndex + 1);
+    }
+
+    let substring1 = phrase.substring(0, currLetterIndex);
     let substring2 = phrase.substring(currLetterIndex + 1)
 
     newString = `${substring1}<span style="color: ${currColor}">${currLetter}</span>${substring2}`;
@@ -76,6 +86,12 @@ function RainbowText() {
 }
 
 
+function TransitionImage(scrollDistanceToImage, currImage, nextImage) {
+  
+}
+
+
+
 
 window.addEventListener("DOMContentLoaded", loadedHandler);
 
@@ -84,6 +100,11 @@ function loadedHandler() {
   window.addEventListener('scroll', ProgressBarFunction);
 
   RainbowText();
+
+  const scrollDistanceToImage = '?';
+  const currImage = 'Images/3to14.png';
+  const nextImage = 'Images/ppp.png';
+  TransitionImage(scrollDistanceToImage, currImage, nextImage);
 
 }
 
