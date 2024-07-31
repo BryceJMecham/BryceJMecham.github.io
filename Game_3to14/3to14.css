@@ -9,79 +9,87 @@
     --suit-height: 30px;
 }
 body{
-    background: linear-gradient(to bottom right, var(--bg-color-1), var(--bg-color-2));
-    display: grid;
-    grid-template-columns: auto 250px 250px auto;
-    grid-template-rows: 15% 300px 300px;
-    align-content: start;
-    justify-content: stretch;
-    grid-template-areas: 
-        "info info info info"
-        ". deck discard players"
-        "hand hand hand hand";
+    /* background: linear-gradient(to bottom right, var(--bg-color-1), var(--bg-color-2)); */
+    background: var(--bg-color-1);
+    text-align: center;
+    margin: 0;
 }
 #infoDiv{
-    grid-area: info;
     text-align: center;
     border: 2px solid black;
-    color: white;
+    color: black;
     font-size: 3em;
-    border-radius: 10px;
     box-shadow: 3px 3px 5px black;
+    background-color: white;
+    padding: 20px;
 }
-#startDiv{
+
+.start{
     border: 3px solid white;
     text-align: center;
-    box-shadow: inset 3px 3px 5px lightgray;
-    text-shadow: 2px 2px 2px lightskyblue;
-    color: white;
-    font-size: 3em;
-    margin: 20px;
+    
+    color: black;
+    font-size: 18px;
+    margin: 50px;
     padding: 10px;
     transition: all 300ms;
-    position: absolute;
-    top: 20%;
-    left: 30px;
+    display: inline-block;
+    border-radius: 10px;
+    background-color: white;
 }
-.start:hover{
-    transform: scale(1.3);
+
+#startButton{
+    border: 3px solid white;
+    text-align: center;
+    box-shadow:  3px 3px 15px lightgray;
+    color: white;
+    font-size: 2em;
+    padding: 10px;
+    transition: all 300ms;
+    display: inline-block;
+    border-radius: 10px;
+}
+#startButton:hover{
+    transform: scale(1.2);
     cursor: pointer;
-    border: 3px solid blueviolet;
+    border: 3px solid white;
+    box-shadow:  3px 3px 5px lsgray;
+}
+#startButton:active{
+    box-shadow: inset 3px 3px 5px lightgray;
 }
 
 #deckDiv{
-    grid-area: deck;
     text-align: center;
-
+    margin: 40px;
 }
 #discardDiv{
-    grid-area: discard;
     text-align: center;
-
+    margin: 30px;
 }
-#handDiv{
-    grid-area: hand;
-    text-align: center;
-    /* display: grid;
-    grid-template-columns: auto;
-    align-content: start;
-    justify-content: center; */
-
-
-}
-#actionsDiv{
-    grid-area: actions;
-    text-align: center;
-    border: 2px solid black;
-}
-
 #emptyDiscard{
     border: 2px dashed black;
     width: var(--card-width);
     height: var(--card-height);
+    text-align: center;
     position: absolute;
-    margin: 10px 20px 20px 45px;
+    margin-left: -20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
+
+#handDiv{
+    
+    text-align: center;
+    margin-top: 300px;
+}
+
+#actionsDiv{
+    display: block;
+    text-align: center;
+    border: 2px solid black;
+}
+
 
 .cardBack{
     border: 1px solid black;
@@ -148,12 +156,11 @@ body{
 }
 
 #playersDiv{
-    grid-area: players;
     text-align: center;
     margin: 20px;
     border-spacing: 20px;
-
 }
+
 td{
     display: inline-block;
     padding: 10px 50px;
@@ -169,11 +176,12 @@ td{
 }
 
 input{
-    width: 300px;
-    height: 50px;
+    width: 100px;
+    height: 30px;
     font-size: 15pt;
     border-radius: 7px;
     border: 1px solid lightgray;
+    text-align: center;
 }
 input:focus{
     border: 1px solid lightgray;
@@ -224,4 +232,21 @@ input[type="submit"]:hover{
 #playersList{
     position: absolute;
     left: 65%
+}
+
+.warning{
+    color: red;
+    font-size: 0.75em;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 10px;
+}
+
+#quotes{
+    margin: 50px;
+}
+
+@media screen and (max-width: 318px) {
+    #discardDiv{
+        margin-top: 200px;
+    }
 }

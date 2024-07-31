@@ -17,36 +17,73 @@
 </head>
 <body>
 
+    <!--vvv Not Hidden! vvv-->
+
     <div id="infoDiv">
         <!-- <h3>Information:</h3> -->
+        Welcome to <span style='display: inline-block;'>3-14!</span>
+    </div>
+    <div id="startDiv">
+        <div class="start"> 
+            <table>
+                <tr>
+                    <td>How Many Players?</td>
+                </tr>
+                <tr>
+                    <td><input type="number" min="1" max="20" step="1" value="1"></td>
+                </tr>
+                <tr>
+                    <td>Player 1's Name:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" maxlength="20">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="display: block">
+            <div id="startButton">START</div>
+        </div>
+    </div>
 
+    <div id="quotes">
+        <p>"Oh, you sweet little thing, you!"</p>
+        <p>"You can't play this game without wild cards."</p>
+        <p>"That card will gut shot the farm."</p>
+        <p>"Ya giraffe neck!"</p>
+        <p>"You dirty, rotten, good-for-nothing, garbage can basketball!"</p>
+        <p>and many more...</p>
+        <p>In loving memory of</p>
+        <cite>Raymond Mecham</cite>
     </div>
-    <div id="startDiv" class="start">
-        <div id="startButton">START</div>
-    </div>
+
+    <!--^^^ Not Hidden! ^^^-->
+    
 
     <div id="cardDesign" class="card" hidden>
 
         <div id="topRank">7</div>
-        <img src="hearts.png" alt="hearts" id="topSuit">
+        <img src="Images/hearts.png" alt="hearts" id="topSuit">
 
         <div id="bottomRank">7</div>
-        <img src="hearts.png" alt="hearts" id="bottomSuit">
+        <img src="Images/hearts.png" alt="hearts" id="bottomSuit">
 
     </div>
 
     <div id="deckDiv" hidden>
         <h3>The Deck</h3>
-
     </div>
+
     <div id="discardDiv" hidden>
         <h3>Discard Pile</h3>
         <div id="emptyDiscard"></div>
     </div>
+    
     <div id="handDiv" hidden>
         <h3>Your Cards</h3>
-
     </div>
+
     <div id="playersDiv" hidden>
         <div style="padding: 10px;"><input id="viewScore" type="submit" value="See All Scores"></div>
         <h3>Players:</h3> 

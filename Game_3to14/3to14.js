@@ -1,22 +1,24 @@
-//window.innerHeight & window.innerWidth are in pixels
-
-//Save to session varibales: round, numOfPlayers, players array with cleared hands.. or clear them after pulling them.
-//      scoreboard html, and playsFirst... I may need to do some of the things
-//      that switchPlayer and endRound do to set the varibels.. but maybe not
-//      because they may be reset from the beginning of the code.
+/*
+ * Author: Bryce Mecham
+ *
+ * 
+ * 
+ */
 
 //Variables 
-let infoDiv = document.getElementById("infoDiv");
-let startDiv = document.getElementById("startDiv");  
-let deckDiv = document.getElementById("deckDiv");
-let discardDiv = document.getElementById("discardDiv");
-let handDiv = document.getElementById("handDiv");
-let actionsDiv = document.getElementById("actionsDiv");
-let body = document.getElementsByTagName("body")[0];
-let playersDiv = document.getElementById("playersDiv");
-let playersList = document.getElementById("playersList");
-let scoreList = document.getElementById("scoreList");
-let scoreBoardTable = document.getElementById("scoreBoard");
+const infoDiv = document.getElementById("infoDiv");
+const startDiv = document.getElementById("startDiv");  
+const deckDiv = document.getElementById("deckDiv");
+const discardDiv = document.getElementById("discardDiv");
+const handDiv = document.getElementById("handDiv");
+const actionsDiv = document.getElementById("actionsDiv");
+const body = document.getElementsByTagName("body")[0];
+const playersDiv = document.getElementById("playersDiv");
+const playersList = document.getElementById("playersList");
+const scoreList = document.getElementById("scoreList");
+const scoreBoardTable = document.getElementById("scoreBoard");
+const startButton = document.getElementById("startButton");
+const quotesDiv = document.getElementById("quotes");
 let numOfPlayers = 0;
 let players = [];
 let deck;
@@ -31,12 +33,12 @@ let round = 3;
 
 const gameStates = {
     GAME_OVER: 0,
-    ROUND_OVER: 1,
+    START: 1,
     PLAYING: 2,
     NEW_DEAL: 3 //do I need this one?
 };
 
-let gameState = gameStates.PLAYING;
+let gameState = gameStates.START;
 
 const suits = [ 
     'hearts',
@@ -51,12 +53,12 @@ const rank = [
 ]
 
 const cardBackImg = [
-    "Queenie1.HEIC",
-    "Queenie2.HEIC",
-    "Queenie3.HEIC",
-    "Queenie4.JPEG",
-    "Queenie5.JPEG",
-    "Queenie6.JPEG"
+    "Images/Queenie1.HEIC",
+    "Images/Queenie2.HEIC",
+    "Images/Queenie3.HEIC",
+    "Images/Queenie4.JPEG",
+    "Images/Queenie5.JPEG",
+    "Images/Queenie6.JPEG"
 ]
 
 class Deck{   //calculating numDecks: Math.ceil(numOfPlayers * 14 / 54);
@@ -135,54 +137,106 @@ document.getElementById("viewScore").addEventListener("click", function(){
         scoreBoardTable.hidden = "true";
     }
 });
+
+
+//Local Storage Items:
+// * numOfPlayers
+// * The game state so progress can be perserved
+
+
+
+
 window.addEventListener("DOMContentLoaded", loadedHandler);
 
 function loadedHandler() {       
-    body.style.height = window.innerHeight + "px";
 
-    //Updating the Information Div
-    let newInfo = document.createElement("div");
-    newInfo.innerHTML = "Welcome to 3-14!";
-    infoDiv.appendChild(newInfo);
+    //Form Validation
+    let startInputs = startDiv.getElementsByTagName("input");
+    const howManyPlayersField = document.getElementsByTagName("tr")[1];
+    const startTable = document.getElementsByTagName("table")[0];
+    let errorGivenForNames = false;
 
-    let startButton = document.getElementById("startButton");
-    //Starting the game
-    startButton.addEventListener("click", function(){
-        startDiv.style.fontSize = "2em";
-        startDiv.classList.remove("start");
-        startDiv.innerHTML = "How many players?";
+    localStorage.setItem("numOfPlayers", 1);
+    let numOfPlayers = localStorage.getItem("numOfPlayers");
+    deckDiv.style.display = "hidden";
+    discardDiv.style.display = "hidden";
 
-        let numInput = document.createElement("input");
-        numInput.type = "number"; 
-        numInput.style.display = "block";
-        numInput.style.margin = "20px";
-        numInput.max = "20";
-        numInput.min = "1";
-        numInput.value = "1";
-        startDiv.appendChild(numInput);
-
-        let submit = document.createElement("input");
-        submit.type = "submit";
-        submit.value = "Let's Play!";
-        submit.style.margin = "20px";
-        submit.classList.add("clickable");
-        submit.style.display = "block";
-        startDiv.appendChild(submit);
-
-        let x=0;
-        submit.addEventListener("click", function() {
-            numOfPlayers = numInput.value;
-            submitPlayers(x);
-        });
-        numInput.addEventListener("keypress", function(event){
-            if(event.key == "Enter"){
-                numOfPlayers = numInput.value;
-                submitPlayers(x);
-            }
-        });
+    //How Many Players? Field: startInputs[0]
+    //Update how many player names are required:
+    startInputs[0].addEventListener("change", function(){
+        localStorage.setItem("numOfPlayers", startInputs[0].value);
+        numOfPlayers = localStorage.getItem("numOfPlayers");
+        startTable.innerHTML = "<tr><td>How Many Players?</td></tr>";
+        startTable.appendChild(howManyPlayersField);
+        for(let i=1; i <= numOfPlayers; ++i){
+            let newPlayerRow = document.createElement("tr");
+            newPlayerRow.innerHTML = "<td>Player " + i +"'s Name:</td></tr><tr><td><input type='text' maxlength='20'></td>"
+            startTable.appendChild(newPlayerRow);
+        }
+        errorGivenForNames = false;
     });
-    
-    
+
+
+    startButton.addEventListener("click", function(){
+        //Loop through inputs to ensure everyone has a name.
+        let nameCheck = true;
+        for (let i=1; i < startInputs.length; ++i){
+            if (startInputs[i].value == ""){
+                nameCheck = false;
+                // startInputs[i].style.borderColor= "red";
+            }
+        }
+        console.log(nameCheck);
+        if (nameCheck){
+            console.log(numOfPlayers);
+            //Get the names for each player
+            for (let i=1; i < numOfPlayers+1; ++i){
+                if(startInputs[i]){
+                    let newPlayer = new Player(startInputs[i].value);
+                    // TO-DO: Find a way to store scalable player data
+                    // localStorage.setItem("Player"+i, newPlayer);
+                    players.push(newPlayer);
+
+                    //Populate the playersDiv
+                    // TO-DO: Do I need this div?
+                    playersDiv.removeAttribute("hidden");
+                    let tr = document.createElement("tr");
+                    let td = document.createElement("td");
+                    td.innerHTML = i + ". " + players[i-1].name;
+                    tr.appendChild(td);
+                    let td2 = document.createElement("td");
+                    td2.innerHTML = players[i-1].score + "pts";
+                    tr.appendChild(td2);
+                    playersList.appendChild(tr);
+
+                    let tdScore = document.createElement("td");
+                    tdScore.innerHTML = "<strong>" + players[i-1].name + "</strong>";
+                    document.getElementById("scorePlayer").appendChild(tdScore);
+                }
+            }
+            console.log(players.length);
+            
+            //Display the game board
+            gameState = gameStates.PLAYING;
+            startDiv.hidden = 'true';
+            quotesDiv.hidden = 'true';
+            deckDiv.style.display = "inline-block";
+            discardDiv.style.display = "inline-block";
+            handDiv.removeAttribute("hidden");
+
+            //Start the Game
+            // TO-DO: Update code from here down...
+            startGame();
+        }
+        else if(!errorGivenForNames){
+            let errorDiv = document.createElement("div");
+            errorDiv.classList.add('warning');
+            errorDiv.innerHTML = "Please enter a name for each player"
+            startTable.appendChild(errorDiv);
+            errorGivenForNames = true;
+        }
+        
+    });
 
 }
 
@@ -193,83 +247,6 @@ function drawCardBack(){
     return newCard;
 }
 
-function submitPlayers(x){
-    
-    startDiv.innerHTML = "Enter Player "+ parseInt(x+1) +"'s Name: ";
-    let textBox = document.createElement("input");
-    textBox.type = "text";
-    textBox.style.display = "block";
-    textBox.style.margin = "20px";
-    startDiv.appendChild(textBox);
-
-    let nextButton = document.createElement("input");
-    nextButton.type = "submit";
-    nextButton.classList.add("clickable");
-    nextButton.style.display = "block";
-    nextButton.style.margin = "20px";
-    if(x == numOfPlayers-1){
-        nextButton.value = "Done!"
-    }
-    else{
-        nextButton.value = "Next Player";
-    }
-    startDiv.appendChild(nextButton);
-
-    nextButton.addEventListener("click", function(){
-        if(textBox.value !== ""){
-            next(x, textBox.value);
-        }
-        else{
-            let warning = document.createElement("h3");
-            warning.innerHTML = "Please enter a name!";
-            warning.style.color = "red";
-            startDiv.appendChild(warning);
-        }
-    });
-    textBox.addEventListener("keypress", function(event){
-        if(event.key == "Enter"){
-            if(textBox.value !== ""){
-                next(x, textBox.value);
-            }
-            else{
-                let warning = document.createElement("h3");
-                warning.innerHTML = "Please enter a name!";
-                warning.style.color = "red";
-                startDiv.appendChild(warning);
-            }
-        }
-    });
-}
-
-function next(x, text){
-    x++;
-
-    //creating the players
-    let newPlayer = new Player(text);
-
-    players.push(newPlayer);
-
-    playersDiv.removeAttribute("hidden");
-    let tr = document.createElement("tr");
-    let td = document.createElement("td");
-    td.innerHTML = x + ". " + players[x-1].name;
-    //li.style.textAlign = "left";
-    tr.appendChild(td);
-    let td2 = document.createElement("td");
-    td2.innerHTML = players[x-1].score + "pts";
-    tr.appendChild(td2);
-    playersList.appendChild(tr);
-
-    let tdScore = document.createElement("td");
-    tdScore.innerHTML = "<strong>" + players[x-1].name + "</strong>";
-    document.getElementById("scorePlayer").appendChild(tdScore);
-
-
-    if(x == numOfPlayers){
-        startGame();
-    }
-    submitPlayers(x);
-}
 
 
 function startGame(){
@@ -283,12 +260,6 @@ function startGame(){
     //Drawing the deck
     drawDeck();
     
-    //Unhiding the oj div's
-    startDiv.hidden = "true";
-    deckDiv.removeAttribute("hidden");
-    discardDiv.removeAttribute("hidden");
-    handDiv.removeAttribute("hidden");
-
     //Playing the game! 3 to 14 is 12 rounds
     playGame(round);
     
@@ -408,17 +379,17 @@ function revealingHand(){
 
 function drawDeck(){
     let newCard = drawCardBack();
-    newCard.style.margin = "20px 20px 20px 55px";
+    newCard.style.margin = "20px 0px 0px -35px";
     newCard.style.backgroundImage = "url(" + deck.cards[deck.cards.length-3].backImg + ")";
     deckDiv.appendChild(newCard);
     
     newCard = drawCardBack();
-    newCard.style.margin = "15px 20px 20px 50px";
+    newCard.style.margin = "15px 0px 0px -40px";
     newCard.style.backgroundImage = "url(" + deck.cards[deck.cards.length-2].backImg + ")";
     deckDiv.appendChild(newCard);
     
     newCard = drawCardBack();
-    newCard.style.margin = "10px 20px 20px 45px";
+    newCard.style.margin = "10px 0px 0px -45px";
     newCard.style.backgroundImage = "url(" + deck.cards[deck.cards.length-1].backImg + ")";
     newCard.id = "topDeckCard";
     deckDiv.appendChild(newCard);
@@ -433,7 +404,7 @@ function drawDiscard(){
     else if(discard.length == 1){
         discardDiv.innerHTML = "<h3>Discard Pile</h3>";
         newCard = drawCard(discard[discard.length - 1].suit, discard[discard.length - 1].rank);
-        newCard.style.margin = "10px 20px 20px 45px";
+        newCard.style.margin = "20px 0px 20px -20px";
         newCard.id = "topDiscardCard";
         discardDiv.appendChild(newCard);
         return newCard; //to make top card clickable
@@ -441,11 +412,11 @@ function drawDiscard(){
     else if(discard.length == 2){
         discardDiv.innerHTML = "<h3>Discard Pile</h3>";
         newCard = drawCard(discard[discard.length - 2].suit, discard[discard.length - 2].rank);
-        newCard.style.margin = "15px 20px 20px 50px";
+        newCard.style.margin = "20px 0px 20px -20px";
         discardDiv.appendChild(newCard);
         
         newCard = drawCard(discard[discard.length - 1].suit, discard[discard.length - 1].rank);
-        newCard.style.margin = "10px 20px 20px 45px";
+        newCard.style.margin = "15px 0px 20px -25px";
         newCard.id = "topDiscardCard";
         discardDiv.appendChild(newCard);
         return newCard; //to make top card clickable
@@ -453,15 +424,15 @@ function drawDiscard(){
     else{
         discardDiv.innerHTML = "<h3>Discard Pile</h3>";
         let newCard = drawCard(discard[discard.length - 3].suit, discard[discard.length - 3].rank);
-        newCard.style.margin = "20px 20px 20px 55px";
+        newCard.style.margin = "20px 0px 20px -20px";
         discardDiv.appendChild(newCard);
         
         newCard = drawCard(discard[discard.length - 2].suit, discard[discard.length - 2].rank);
-        newCard.style.margin = "15px 20px 20px 50px";
+        newCard.style.margin = "15px 0px 20px -25px";
         discardDiv.appendChild(newCard);
         
         newCard = drawCard(discard[discard.length - 1].suit, discard[discard.length - 1].rank);
-        newCard.style.margin = "10px 20px 20px 45px";
+        newCard.style.margin = "10px 0px 20px -30px";
         newCard.id = "topDiscardCard";
         discardDiv.appendChild(newCard);
         return newCard; //to make top card clickable
@@ -601,31 +572,31 @@ function drawCard(suit, rank){
 
     if(suit == 'dimonds'){  //suits[1]
         topRankDiv.style.color= "red";
-        topSuitDiv.src = "dimonds.png";
-        card.style.backgroundImage = "url(dimonds.png)";
+        topSuitDiv.src = "Images/dimonds.png";
+        card.style.backgroundImage = "url(Images/dimonds.png)";
         bottomRankDiv.style.color= "red";
-        bottomSuitDiv.src = "dimonds.png";
+        bottomSuitDiv.src = "Images/dimonds.png";
     }
     else if(suit == 'hearts'){ //suits[0]
         topRankDiv.style.color= "red";
-        topSuitDiv.src = "hearts.png";
-        card.style.backgroundImage = "url(hearts.png)";
+        topSuitDiv.src = "Images/hearts.png";
+        card.style.backgroundImage = "url(Images/hearts.png)";
         bottomRankDiv.style.color= "red";
-        bottomSuitDiv.src = "hearts.png";
+        bottomSuitDiv.src = "Images/hearts.png";
     }
     else if(suit == 'clubs'){ //suits[3]
         topRankDiv.style.color= "black";
-        topSuitDiv.src = "clubs.png";
-        card.style.backgroundImage = "url(clubs.png)";
+        topSuitDiv.src = "Images/clubs.png";
+        card.style.backgroundImage = "url(Images/clubs.png)";
         bottomRankDiv.style.color= "black";
-        bottomSuitDiv.src = "clubs.png";
+        bottomSuitDiv.src = "Images/clubs.png";
     }
     else if(suit == 'spades'){ //suits[2]
         topRankDiv.style.color= "black";
-        topSuitDiv.src = "spades.png";
-        card.style.backgroundImage = "url(spades.png)";
+        topSuitDiv.src = "Images/spades.png";
+        card.style.backgroundImage = "url(Images/spades.png)";
         bottomRankDiv.style.color= "black";
-        bottomSuitDiv.src = "spades.png";
+        bottomSuitDiv.src = "Images/spades.png";
     }
     else if(suit == 'Joker'){
         //find a good icon!*************************************
