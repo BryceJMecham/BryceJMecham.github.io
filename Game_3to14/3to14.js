@@ -125,22 +125,10 @@ class Player{
     // }
 }
 
-document.getElementById("scoreSubmit").addEventListener("click", function(){
-    scoreBoardTable.hidden = "true";
-});
-document.getElementById("viewScore").addEventListener("click", function(){
-    if(scoreBoardTable.hidden == true){
-        scoreBoardTable.removeAttribute("hidden");
-    }
-    else{
-        scoreBoardTable.hidden = "true";
-    }
-});
-
 
 //Local Storage Items:
 // players
-gameState = localStorage.getItem("gameState");
+// gameState = localStorage.getItem("gameState");
 
 
 
@@ -150,6 +138,19 @@ gameState = localStorage.getItem("gameState");
 window.addEventListener("DOMContentLoaded", loadedHandler);
 
 function loadedHandler() {       
+
+    //Submit type input listeners
+    document.getElementById("scoreSubmit").addEventListener("click", function(){
+        scoreBoardTable.hidden = "true";
+    });
+    document.getElementById("viewScore").addEventListener("click", function(){
+        if(scoreBoardTable.hidden == true){
+            scoreBoardTable.removeAttribute("hidden");
+        }
+        else{
+            scoreBoardTable.hidden = "true";
+        }
+    });
 
     //Form Validation
     let startInputs = startDiv.getElementsByTagName("input");
@@ -179,21 +180,35 @@ function loadedHandler() {
         //Loop through inputs to ensure everyone has a name.
         let nameCheck = true;
         for (let i=1; i < startInputs.length; ++i){
+            //Name cannot be blank
             if (startInputs[i].value == ""){
+                if(nameCheck){
+                    console.log("WARN: Name(s) are blank!");
+                }
                 nameCheck = false;
-                // startInputs[i].style.borderColor= "red";
+            }
+            //Name must be unique
+            for (let j=i+1; j < startInputs.length + 1 - i; ++j){
+                if (startInputs[i].value == startInputs[j].value){
+                    nameCheck = false;
+                    console.log("WARN: Names are not unique!");
+                    break;
+                }
             }
         }
 
         if (nameCheck){
             console.log(numOfPlayers);
-            //Get the names for each player
+            //Get the names for each player and add players to players list
             for (let i=1; i < numOfPlayers+1; ++i){
                 if(startInputs[i]){
                     let newPlayer = new Player(startInputs[i].value);
-// TO-DO: Find a way to store scalable player data
-                    // localStorage.setItem("Player"+i, newPlayer);
                     players.push(newPlayer);
+
+                    //Adding players to scoreboard
+                    let td = document.createElement("td");
+                    td.innerHTML = players[i-1].name;
+                    document.getElementById("scorePlayer").appendChild(td);
                 }
             }
             //Display the game board
@@ -204,6 +219,8 @@ function loadedHandler() {
             discardDiv.style.display = "inline-block";
             handDiv.removeAttribute("hidden");
             playersDiv.style.display = "inline-block";
+
+            
 
             //Start the Game
             //Creating the deck and shuffling
@@ -216,13 +233,13 @@ function loadedHandler() {
             drawDeck();
             
             //Playing the game! 3 to 14 is 12 rounds
-            playGame();
+            startRound();
             revealingHand();
         }
         else if(!errorGivenForNames){
             let errorDiv = document.createElement("div");
             errorDiv.classList.add('warning');
-            errorDiv.innerHTML = "Please enter a name for each player"
+            errorDiv.innerHTML = "Please enter a unique name for each player"
             startTable.appendChild(errorDiv);
             errorGivenForNames = true;
         }
@@ -239,7 +256,7 @@ function drawCardBack(){
 }
 
 
-function playGame(){
+function startRound(){
     //Dealing cards (changing the top card on the deck background img)
     for(let r=0; r<round; r++){
         for(let p=0; p<players.length; p++){
@@ -261,23 +278,29 @@ function playGame(){
     }
 
     interactingPlayer = players[playsFirst];
-   
-//TO-DO: I may need to change who goes first when implementing a 1 player game
     
-
     infoDiv.innerHTML = "New round! " + interactingPlayer.name + " plays first.";
 
     discard.push(deck.cards.pop());
-
 }
 
 
 function revealingHand(){
+    
+    if(playerHasLayedDown){
+        let alert = document.createElement("div");
+        alert.innerHTML = "This is your last turn! " + playerWhoLayedDown.name + " has layed down."; 
+        alert.classList.add("alert");
+        handDiv.appendChild(alert);
+    }
+    
     let revealHand = document.createElement("input");
     revealHand.type = "submit";
     revealHand.value = "Reveal " + interactingPlayer.name + "'s hand";
     revealHand.classList.add("clickable");
     handDiv.appendChild(revealHand);
+
+    playersDiv.style.marginTop = "50px";
 
     revealHand.addEventListener("click", function(){
         // Moves the score board button so it's not under the cards
@@ -291,11 +314,6 @@ function revealingHand(){
         //update the infomation board
         infoDiv.style.fontSize = "3em";
         infoDiv.innerHTML = "Draw a card from the deck or discard pile"
-
-        if(playerHasLayedDown){
-            window.alert("This is your last turn. " + playerWhoLayedDown.name + " has layed down.")
-            //show points earnd at end of turn?
-        }
 
         let discardTopCard = drawDiscard();
         if(discardTopCard != null){
@@ -437,7 +455,7 @@ function selected(index){
                         console.log("add points here maybe?");
                     }
                     else if(layDownCheck()){    
-                        let endRound = window.confirm("You can lay down. Would you like to lay down?");
+                        let endRound = window.confirm("Can you lay down?");
                         if(endRound){
                             playerWhoLayedDown = interactingPlayer;
                             playerHasLayedDown = true;
@@ -461,7 +479,7 @@ function selected(index){
                         console.log("add points here maybe?");
                     }
                     else if(layDownCheck()){    
-                        let endRound = window.confirm("You can lay down. Would you like to lay down?");
+                        let endRound = window.confirm("Can you lay down?");
                         if(endRound){
                             playerWhoLayedDown = interactingPlayer;
                             playerHasLayedDown = true;
@@ -538,14 +556,31 @@ function drawCard(suit, rank){
         bottomRankDiv.style.color= "black";
         bottomSuitDiv.src = "Images/spades.png";
     }
-    else if(suit == 'Joker'){
-        //find a good icon!*************************************
-    }
 
-    card.appendChild(topRankDiv);
-    card.appendChild(bottomRankDiv);
-    card.appendChild(topSuitDiv);
-    card.appendChild(bottomSuitDiv);
+    if(rankSub == 10){
+        topRankDiv.style.left = "5px";
+        bottomRankDiv.style.left = "117px";
+    }
+ 
+    if(suit == 'Joker'){
+        bottomRankDiv.style.left = "80px";
+        bottomRankDiv.style.top = "165px";
+        topSuitDiv.src = "Images/CalciferFan.jpg";
+        topSuitDiv.style.height = "120px";
+        topSuitDiv.style.width = "100px";
+        topSuitDiv.style.left = "25px";
+        topSuitDiv.style.top = "40px";
+
+        card.appendChild(topRankDiv);
+        card.appendChild(bottomRankDiv);
+        card.appendChild(topSuitDiv);
+    }
+    else{
+        card.appendChild(topRankDiv);
+        card.appendChild(bottomRankDiv);
+        card.appendChild(topSuitDiv);
+        card.appendChild(bottomSuitDiv);
+    }
 
     return card;
 }
@@ -599,17 +634,6 @@ function switchPlayers(){
         revealingHand();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -952,7 +976,7 @@ function endRound(){
         console.log(deck);
         deck.shuffle();
         scoreBoardTable.removeAttribute("hidden");
-        playGame();
+        startRound();
         revealingHand();
     }
 }

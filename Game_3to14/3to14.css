@@ -203,17 +203,18 @@ input[type="submit"]:hover{
 
 #scoreBoard{
     position: absolute;
-    top: 5%;
-    left: 15%;
+    width: 95%;
+    height: 200%;
+    top: 0px;
 
     background-color: white;
     border: 2px solid black;
     padding: 10px;
-    font-size: 1.5em;
+    padding-top: 200px;
+    font-size: 13pt;
 }
 
 #scoreBoard table {
-    border-collapse: collapse;
     text-align: center;
 }
 #scoreBoard table tr:nth-child(odd){
@@ -239,6 +240,17 @@ input[type="submit"]:hover{
     font-size: 0.75em;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 10px;
+}
+
+.alert{
+    background-color: white;
+    border: 2px solid rgb(77, 128, 216);
+    font-size: 13pt;
+    margin: 20px;
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    display: inline-block;
 }
 
 #quotes{
