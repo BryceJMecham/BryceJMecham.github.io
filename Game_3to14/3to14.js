@@ -14,12 +14,11 @@ const handDiv = document.getElementById("handDiv");
 const actionsDiv = document.getElementById("actionsDiv");
 const body = document.getElementsByTagName("body")[0];
 const playersDiv = document.getElementById("playersDiv");
-const playersList = document.getElementById("playersList");
 const scoreList = document.getElementById("scoreList");
 const scoreBoardTable = document.getElementById("scoreBoard");
 const startButton = document.getElementById("startButton");
 const quotesDiv = document.getElementById("quotes");
-let numOfPlayers = 0;
+let numOfPlayers = 1;
 let players = [];
 let deck;
 let discard = [];
@@ -70,7 +69,7 @@ class Deck{   //calculating numDecks: Math.ceil(numOfPlayers * 14 / 54);
     shuffle(){
         for(let x = 0; x < 2; x++){ //too much?
             for(let i = this.cards.length - 1; i > 0; i--){
-                let j = Math.floor(Math.random() * (i + 1)); //does this go one number too high?
+                let j = Math.floor(Math.random() * (i + 1));
                 let tmp = this.cards[i];
                 this.cards[i] = this.cards[j];
                 this.cards[j] = tmp;
@@ -140,11 +139,13 @@ document.getElementById("viewScore").addEventListener("click", function(){
 
 
 //Local Storage Items:
-// * numOfPlayers
-// * The game state so progress can be perserved
+// players
+gameState = localStorage.getItem("gameState");
 
 
 
+//TO-DO: Animate card movement
+//TO-DO: Add a place like mario card :)
 
 window.addEventListener("DOMContentLoaded", loadedHandler);
 
@@ -156,16 +157,13 @@ function loadedHandler() {
     const startTable = document.getElementsByTagName("table")[0];
     let errorGivenForNames = false;
 
-    localStorage.setItem("numOfPlayers", 1);
-    let numOfPlayers = localStorage.getItem("numOfPlayers");
     deckDiv.style.display = "hidden";
     discardDiv.style.display = "hidden";
 
     //How Many Players? Field: startInputs[0]
     //Update how many player names are required:
     startInputs[0].addEventListener("change", function(){
-        localStorage.setItem("numOfPlayers", startInputs[0].value);
-        numOfPlayers = localStorage.getItem("numOfPlayers");
+        numOfPlayers = startInputs[0].value
         startTable.innerHTML = "<tr><td>How Many Players?</td></tr>";
         startTable.appendChild(howManyPlayersField);
         for(let i=1; i <= numOfPlayers; ++i){
@@ -186,36 +184,18 @@ function loadedHandler() {
                 // startInputs[i].style.borderColor= "red";
             }
         }
-        console.log(nameCheck);
+
         if (nameCheck){
             console.log(numOfPlayers);
             //Get the names for each player
             for (let i=1; i < numOfPlayers+1; ++i){
                 if(startInputs[i]){
                     let newPlayer = new Player(startInputs[i].value);
-                    // TO-DO: Find a way to store scalable player data
+// TO-DO: Find a way to store scalable player data
                     // localStorage.setItem("Player"+i, newPlayer);
                     players.push(newPlayer);
-
-                    //Populate the playersDiv
-                    // TO-DO: Do I need this div?
-                    playersDiv.removeAttribute("hidden");
-                    let tr = document.createElement("tr");
-                    let td = document.createElement("td");
-                    td.innerHTML = i + ". " + players[i-1].name;
-                    tr.appendChild(td);
-                    let td2 = document.createElement("td");
-                    td2.innerHTML = players[i-1].score + "pts";
-                    tr.appendChild(td2);
-                    playersList.appendChild(tr);
-
-                    let tdScore = document.createElement("td");
-                    tdScore.innerHTML = "<strong>" + players[i-1].name + "</strong>";
-                    document.getElementById("scorePlayer").appendChild(tdScore);
                 }
             }
-            console.log(players.length);
-            
             //Display the game board
             gameState = gameStates.PLAYING;
             startDiv.hidden = 'true';
@@ -223,10 +203,21 @@ function loadedHandler() {
             deckDiv.style.display = "inline-block";
             discardDiv.style.display = "inline-block";
             handDiv.removeAttribute("hidden");
+            playersDiv.style.display = "inline-block";
 
             //Start the Game
-            // TO-DO: Update code from here down...
-            startGame();
+            //Creating the deck and shuffling
+            let numOfDecks = Math.ceil(players.length * 14 / 54) + 1;
+            deck = new Deck(numOfDecks);
+            deck.cards = deck.createNewDeck();
+            deck.shuffle();
+
+            //Drawing the deck
+            drawDeck();
+            
+            //Playing the game! 3 to 14 is 12 rounds
+            playGame();
+            revealingHand();
         }
         else if(!errorGivenForNames){
             let errorDiv = document.createElement("div");
@@ -248,24 +239,6 @@ function drawCardBack(){
 }
 
 
-
-function startGame(){
-    
-    //Creating the deck and shuffling
-    deck = new Deck(Math.ceil(numOfPlayers * 14 / 54) + 1);
-    deck.cards = deck.createNewDeck();
-    console.log(deck);
-    deck.shuffle();
-
-    //Drawing the deck
-    drawDeck();
-    
-    //Playing the game! 3 to 14 is 12 rounds
-    playGame(round);
-    
-
-}
-
 function playGame(){
     //Dealing cards (changing the top card on the deck background img)
     for(let r=0; r<round; r++){
@@ -274,8 +247,7 @@ function playGame(){
         }
     }
 
-    gameState = gameStates.PLAYING;
-
+    //Determine who plays first each round
     playsFirst = 0;
     if(round - 3 < players.length){
         playsFirst = round-3;
@@ -290,50 +262,15 @@ function playGame(){
 
     interactingPlayer = players[playsFirst];
    
-    //I may need to change who goes first when implementing a 1 player game
+//TO-DO: I may need to change who goes first when implementing a 1 player game
+    
+
     infoDiv.innerHTML = "New round! " + interactingPlayer.name + " plays first.";
 
     discard.push(deck.cards.pop());
 
-    console.log(deck);
-
-    revealingHand();
-
-    
-
-
-
-    //Organizing the hand
-
-    //Tracking game state
-   // while(gameState == gameStates.PLAYING){
-        
-        
-        //Switching turns
-    
-   // }
-    
-
-    // if(gameState == gameStates.ROUND_OVER){
-
-    // }
-    // else if(gameState == gameStates.GAME_OVER){
-
-    // }
-
-    
-
-
-
-    // let moveDiv = document.getElementById();
-    // let whereTop = document.getElementById().style.top;
-    // let whereLeft = document.getElementById().style.left;
-    // let intervalId = setInterval(moveCard, 10, moveDiv, whereTop, whereLeft);
 }
 
-function moveCard(moveDiv, whereTop, whereLeft){
-
-}
 
 function revealingHand(){
     let revealHand = document.createElement("input");
@@ -343,6 +280,9 @@ function revealingHand(){
     handDiv.appendChild(revealHand);
 
     revealHand.addEventListener("click", function(){
+        // Moves the score board button so it's not under the cards
+        playersDiv.style.marginTop = "250px";
+        
         showHand();
 
         let deckTopCard = drawDeck();
@@ -636,7 +576,7 @@ function playerDrew(cardIsFrom){
 
 function switchPlayers(){
     playsFirst++;
-    if(playsFirst >= numOfPlayers){
+    if(playsFirst >= players.length){
         playsFirst = 0;
     }
     interactingPlayer = players[playsFirst];
@@ -660,168 +600,187 @@ function switchPlayers(){
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function layDownCheck(){
-    //copy the players hand
-    // let handDup = [];
-    // for(let x=0; x<interactingPlayer.hand.length;x++){
-    //     handDup.push(interactingPlayer.hand[x]);
+    return true;
+    // //copy the players hand
+    // // let handDup = [];
+    // // for(let x=0; x<interactingPlayer.hand.length;x++){
+    // //     handDup.push(interactingPlayer.hand[x]);
+    // // }
+
+    // let wildIndices = [];
+
+    // //Checking for sets
+    // let sets = [];
+
+    // for(let x=0; x<interactingPlayer.hand.length; x++){
+    //     interactingPlayer.hand[x].matched = false;
+    //     if(interactingPlayer.hand[x].rank == "Joker" || interactingPlayer.hand[x].rank == round){
+    //         interactingPlayer.hand[x].matched = true;
+    //         wildIndices.push(x);
+    //         if(wildIndices.length == round){
+    //             for(let x=0; x<interactingPlayer.hand.length; x++){
+    //                 if(interactingPlayer.hand[x].matched == true){
+    //                     document.getElementById("card"+x).style.backgroundColor = "lightgreen";
+    //                 }
+    //             }
+    //             return true;
+    //         }
+    //     }
     // }
+    // console.log(wildIndices);
 
-    let wildIndices = [];
+    // for(let card=0; card < interactingPlayer.hand.length-1; card++){
+    //     let set = [];
+    //     if(interactingPlayer.hand[card].matched == false){
+    //         set.push(card);
+    //         interactingPlayer.hand[card].matched = true;  //probably don't need this
+    //         for(let check=1+card; check < interactingPlayer.hand.length; check++){
+    //             if(interactingPlayer.hand[check].matched == false){
+    //                 if(interactingPlayer.hand[card].rank == interactingPlayer.hand[check].rank){
+    //                     interactingPlayer.hand[check].matched = true;
+    //                     set.push(check);
+    //                 }
+    //             }
+    //         }
+    //         if(set.length >= 3){
+    //             console.log("Set pushed:");
+    //             console.log(set);
+    //             sets.push(set);
+    //         }
+    //         else if(set.length >= 3-wildIndices.length){
+    //             for(let w=0; set.length < 3; w++){
+    //                 set.push(wildIndices[w]);
+    //             }
+    //             console.log("Set pushed:");
+    //             console.log(set);
+    //             sets.push(set);
+    //         }
+    //         else{
+    //             for(let x=0; x<set.length; x++){
+    //                 interactingPlayer.hand[set[x]].matched = false;
+    //             }
+    //         }
+    //         if(set.length == round){
+    //             for(let x=0; x<interactingPlayer.hand.length; x++){
+    //                 if(interactingPlayer.hand[x].matched == true){
+    //                     document.getElementById("card"+x).style.backgroundColor = "lightgreen";
+    //                 }
+    //             }
+    //             return true;
+    //         }
+    //     }
+//     }
 
-    //Checking for sets
-    let sets = [];
+//     //Checking for runs
+//     let runs = [];
 
-    for(let x=0; x<interactingPlayer.hand.length; x++){
-        interactingPlayer.hand[x].matched = false;
-        if(interactingPlayer.hand[x].rank == "Joker" || interactingPlayer.hand[x].rank == round){
-            interactingPlayer.hand[x].matched = true;
-            wildIndices.push(x);
-            if(wildIndices.length == round){
-                for(let x=0; x<interactingPlayer.hand.length; x++){
-                    if(interactingPlayer.hand[x].matched == true){
-                        document.getElementById("card"+x).style.backgroundColor = "lightgreen";
-                    }
-                }
-                return true;
-            }
-        }
-    }
-    console.log(wildIndices);
-
-    for(let card=0; card < interactingPlayer.hand.length-1; card++){
-        let set = [];
-        if(interactingPlayer.hand[card].matched == false){
-            set.push(card);
-            interactingPlayer.hand[card].matched = true;  //probably don't need this
-            for(let check=1+card; check < interactingPlayer.hand.length; check++){
-                if(interactingPlayer.hand[check].matched == false){
-                    if(interactingPlayer.hand[card].rank == interactingPlayer.hand[check].rank){
-                        interactingPlayer.hand[check].matched = true;
-                        set.push(check);
-                    }
-                }
-            }
-            if(set.length >= 3){
-                console.log("Set pushed:");
-                console.log(set);
-                sets.push(set);
-            }
-            else if(set.length >= 3-wildIndices.length){
-                for(let w=0; set.length < 3; w++){
-                    set.push(wildIndices[w]);
-                }
-                console.log("Set pushed:");
-                console.log(set);
-                sets.push(set);
-            }
-            else{
-                for(let x=0; x<set.length; x++){
-                    interactingPlayer.hand[set[x]].matched = false;
-                }
-            }
-            if(set.length == round){
-                for(let x=0; x<interactingPlayer.hand.length; x++){
-                    if(interactingPlayer.hand[x].matched == true){
-                        document.getElementById("card"+x).style.backgroundColor = "lightgreen";
-                    }
-                }
-                return true;
-            }
-        }
-    }
-
-    //Checking for runs
-    let runs = [];
-
-    for(let x=0; x<interactingPlayer.hand.length; x++){
-        interactingPlayer.hand[x].matched = false;
-        if(interactingPlayer.hand[x].rank == "Joker" || interactingPlayer.hand[x].rank == round){
-            interactingPlayer.hand[x].matched = true;
-        }
-    }
-//Ace's counting as a 1 or a 14...***********************
-    for(let card=0; card < interactingPlayer.hand.length-1; card++){
-        let run = [];
-        if(interactingPlayer.hand[card].matched == false){
-            run.push(card);
-            interactingPlayer.hand[card].matched = true; 
-            for(let check=1+card; check < interactingPlayer.hand.length; check++){
-                if(interactingPlayer.hand[card].suit == interactingPlayer.hand[check].suit && interactingPlayer.hand[check].matched == false){
-                    if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank-1){
-                        run.push(check);
-                        interactingPlayer.hand[check].matched = true;
-                        checkSmallerRanks(run, card, interactingPlayer.hand[check].rank, 0, wildIndices);
-                    }
-                    else if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank+1){
-                        run.push(check);
-                        interactingPlayer.hand[check].matched = true;
-                        checkLargerRanks(run, card, interactingPlayer.hand[check].rank, 0, wildIndices);
-                    }
-                    else {
-                        for(let w=1; w<wildIndices.length+1; w++){
-                            if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank+1+w){
-                                for(let v=0; v<w; v++){
-                                    run.push(wildIndices[v]);
-                                }
-                                run.push(check);
-                                interactingPlayer.hand[check].matched = true;
-                                checkLargerRanks(run, card, interactingPlayer.hand[check].rank, w, wildIndices);
-                            }
-                            if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank-1-w){
-                                for(let v=0; v<w; v++){
-                                    run.push(wildIndices[v]);
-                                }
-                                run.push(check);
-                                interactingPlayer.hand[check].matched = true;
-                                checkSmallerRanks(run, card, interactingPlayer.hand[check].rank, w, wildIndices);
-                            }
-                        }
-                    }
-                }
-            }
-            if(run.length >= 3){
-                runs.push(run);
-            }
-            else if(run.length >= 3-wildIndices.length){
-                for(let w=0; run.length < 3; w++){
-                    run.push(wildIndices[w]);
-                }
-                runs.push(run);
-            }
-            else{
-                for(let x=0; x<run.length; x++){
-                    interactingPlayer.hand[run[x]].matched = false;
-                }
-            }
-            if(run.length == round){
-                for(let x=0; x<interactingPlayer.hand.length; x++){
-                    if(interactingPlayer.hand[x].matched == true){
-                        document.getElementById("card"+x).style.backgroundColor = "lightseagreen";
-                    }
-                }
-                return true;
-            }
-        }
-    }
+//     for(let x=0; x<interactingPlayer.hand.length; x++){
+//         interactingPlayer.hand[x].matched = false;
+//         if(interactingPlayer.hand[x].rank == "Joker" || interactingPlayer.hand[x].rank == round){
+//             interactingPlayer.hand[x].matched = true;
+//         }
+//     }
+// //Ace's counting as a 1 or a 14...***********************
+//     for(let card=0; card < interactingPlayer.hand.length-1; card++){
+//         let run = [];
+//         if(interactingPlayer.hand[card].matched == false){
+//             run.push(card);
+//             interactingPlayer.hand[card].matched = true; 
+//             for(let check=1+card; check < interactingPlayer.hand.length; check++){
+//                 if(interactingPlayer.hand[card].suit == interactingPlayer.hand[check].suit && interactingPlayer.hand[check].matched == false){
+//                     if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank-1){
+//                         run.push(check);
+//                         interactingPlayer.hand[check].matched = true;
+//                         checkSmallerRanks(run, card, interactingPlayer.hand[check].rank, 0, wildIndices);
+//                     }
+//                     else if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank+1){
+//                         run.push(check);
+//                         interactingPlayer.hand[check].matched = true;
+//                         checkLargerRanks(run, card, interactingPlayer.hand[check].rank, 0, wildIndices);
+//                     }
+//                     else {
+//                         for(let w=1; w<wildIndices.length+1; w++){
+//                             if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank+1+w){
+//                                 for(let v=0; v<w; v++){
+//                                     run.push(wildIndices[v]);
+//                                 }
+//                                 run.push(check);
+//                                 interactingPlayer.hand[check].matched = true;
+//                                 checkLargerRanks(run, card, interactingPlayer.hand[check].rank, w, wildIndices);
+//                             }
+//                             if(interactingPlayer.hand[check].rank == interactingPlayer.hand[card].rank-1-w){
+//                                 for(let v=0; v<w; v++){
+//                                     run.push(wildIndices[v]);
+//                                 }
+//                                 run.push(check);
+//                                 interactingPlayer.hand[check].matched = true;
+//                                 checkSmallerRanks(run, card, interactingPlayer.hand[check].rank, w, wildIndices);
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             if(run.length >= 3){
+//                 runs.push(run);
+//             }
+//             else if(run.length >= 3-wildIndices.length){
+//                 for(let w=0; run.length < 3; w++){
+//                     run.push(wildIndices[w]);
+//                 }
+//                 runs.push(run);
+//             }
+//             else{
+//                 for(let x=0; x<run.length; x++){
+//                     interactingPlayer.hand[run[x]].matched = false;
+//                 }
+//             }
+//             if(run.length == round){
+//                 for(let x=0; x<interactingPlayer.hand.length; x++){
+//                     if(interactingPlayer.hand[x].matched == true){
+//                         document.getElementById("card"+x).style.backgroundColor = "lightseagreen";
+//                     }
+//                 }
+//                 return true;
+//             }
+//         }
+//     }
 
 
-    //If there are more than one runs and/or sets
-    if(sets.length > 1 || runs.length > 1 || (sets.length >= 1 && runs.length >= 1)){
-        return setsCheck(sets, runs, wildIndices);
-    }
-    else{
-        //Determine combo info and determineScore for single groups that can't laydown
-        //******************** */
-        return false;
-    }
+//     //If there are more than one runs and/or sets
+//     if(sets.length > 1 || runs.length > 1 || (sets.length >= 1 && runs.length >= 1)){
+//         return setsCheck(sets, runs, wildIndices);
+//     }
+//     else{
+//         //Determine combo info and determineScore for single groups that can't laydown
+//         //******************** */
+//         return false;
+//     }
 
 
-    //some serious algarithms here*******************************
+//     //some serious algarithms here*******************************
 
-    //0. in a minimum set of 3
-    //1. in a set of more than 3; after one card is removed it becomes a 0
-    //2. in
+//     //0. in a minimum set of 3
+//     //1. in a set of more than 3; after one card is removed it becomes a 0
+//     //2. in
 
 }
 function checkSmallerRanks(run, card, rank, wildsUsed, wildIndices){ //( the array, index to start from-1, rank)
@@ -919,62 +878,54 @@ function setsCheck(sets, runs, wildIndices){  //these are arrays of arrays conta
 
 function determineScore(combo){
     let score = 0;
-    let inverseIndices = [];
-    //Finding inverse indices
-    for(let b=0; b<interactingPlayer.hand.length; b++){
-        let hasIndex = false;
-        for(let a=0; a<combo.indices.length; a++){
-            if(combo.indices[a] == b){
-                hasIndex = true;
-            }
-        }
-        if(hasIndex == false){
-            inverseIndices.push(b);
-        }
-    }
+    // let inverseIndices = [];
+    // //Finding inverse indices
+    // for(let b=0; b<interactingPlayer.hand.length; b++){
+    //     let hasIndex = false;
+    //     for(let a=0; a<combo.indices.length; a++){
+    //         if(combo.indices[a] == b){
+    //             hasIndex = true;
+    //         }
+    //     }
+    //     if(hasIndex == false){
+    //         inverseIndices.push(b);
+    //     }
+    // }
 
-    console.log(combo.indices);
-    console.log(inverseIndices);
+    // console.log(combo.indices);
+    // console.log(inverseIndices);
 
-    for(let x=0; x<inverseIndices.length; x++){
-        if(interactingPlayer.hand[combo.indices[x]].rank == 'Joker' || interactingPlayer.hand[combo.indices[x]].rank == round){
-            score += 20;
-        }
-        else if(interactingPlayer.hand[combo.indices[x]].rank < 10){
-            score += 5;
-        }
-        else if(interactingPlayer.hand[combo.indices[x]].rank == 14){
-            score += 15;
-        }
-        else if(interactingPlayer.hand[combo.indices[x]].rank >= 10){
-            score += 10;
-        }
-    }
-    combo.points = score;
+    // for(let x=0; x<inverseIndices.length; x++){
+    //     if(interactingPlayer.hand[combo.indices[x]].rank == 'Joker' || interactingPlayer.hand[combo.indices[x]].rank == round){
+    //         score += 20;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank < 10){
+    //         score += 5;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank == 14){
+    //         score += 15;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank >= 10){
+    //         score += 10;
+    //     }
+    // }
+    // combo.points = score;
     console.log(score);
 }
 
 function endRound(){
     console.log("round has ended");
     //update scores
-    playersList.innerHTML = "";
-    for(let x=0; x<numOfPlayers; x++){
+    console.log(players.length);
+    for(let x=0; x<players.length; x++){
         if(playerWhoLayedDown.name == players[x].name){
             players[x].score += 0;
         }
         else{
-            //change to give appropriate scores...***************************
+//TO-DO: change to give appropriate scores...***************************
             players[x].score += 10;
         }
-        let tr = document.createElement("tr");
-        let td = document.createElement("td");
-        td.innerHTML = (x + 1) + ". " + players[x].name;
-        //li.style.textAlign = "left";
-        tr.appendChild(td);
-        let td2 = document.createElement("td");
-        td2.innerHTML = players[x].score + "pts";
-        tr.appendChild(td2);
-        playersList.appendChild(tr);
+
 
         let tdScore = document.createElement("td");
         tdScore.innerHTML = players[x].score;
@@ -990,19 +941,19 @@ function endRound(){
     else{
         round++;
         //clear player hand and put back in deck and shuffle
-        for(let x=0; x < numOfPlayers; x++){
+        for(let x=0; x < players.length; x++){
             for(let y=0; y<round-1; y++){
                 deck.cards.push(players[x].hand.pop());
             }
         }
         while(discard.length > 0){
-            console.log("in before");
             deck.cards.push(discard.pop());
         }
         console.log(deck);
         deck.shuffle();
         scoreBoardTable.removeAttribute("hidden");
         playGame();
+        revealingHand();
     }
 }
 
@@ -1016,7 +967,7 @@ function endGame(){
     scoreBoardTable.removeAttribute("hidden");
 
     let winner = players[0];
-    for(let x=1; x<numOfPlayers; x++){
+    for(let x=1; x<players.length; x++){
         if(players[x].score < winner.score){
             winner = players[x];
         }
