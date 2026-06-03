@@ -164,7 +164,7 @@ function loadedHandler() {
     //How Many Players? Field: startInputs[0]
     //Update how many player names are required:
     startInputs[0].addEventListener("change", function(){
-        numOfPlayers = startInputs[0].value
+        numOfPlayers = startInputs[0].value;
         startTable.innerHTML = "<tr><td>How Many Players?</td></tr>";
         startTable.appendChild(howManyPlayersField);
         for(let i=1; i <= numOfPlayers; ++i){
