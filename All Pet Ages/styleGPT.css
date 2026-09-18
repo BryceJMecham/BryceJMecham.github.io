@@ -1,0 +1,518 @@
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(to bottom right, #e0f7f4, #f9f9f9);
+  background-attachment: fixed;
+  background-size: cover;
+  color: #2d3a3a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* prevents sideways scrolling */
+}
+
+main {
+  color: #2d3a3a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+}
+
+
+
+/* ===== Main Container ===== */
+#form, .articles, form {
+  background: #ffffffcc;
+  border-radius: 20px;
+  padding: 30px 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #236f5f;
+  margin-top: 50px;
+}
+
+p {
+  font-size: 1rem;
+  color: #4a4a4a;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Form Fields ===== */
+label {
+  font-weight: 600;
+  color: #2c5c52;
+  display: block;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+select,
+input[type="number"], input[type="text"], input[type="email"], textarea, input[type="date"] {
+  font-size: 1rem;
+  border: 1px solid #b8dcd3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 5px 0 15px 0;
+  background-color: #f9fffd;
+  color: #2d3a3a;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  max-width: 250px;
+}
+
+select,
+input[type="number"], input[type="date"] {
+  text-align: center;
+}
+
+textarea {
+  height: 150px;
+  width: 250px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+select:focus,
+input[type="number"]:focus, input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+  border-color: #6ec5b8;
+  box-shadow: 0 0 5px rgba(110, 197, 184, 0.6);
+  outline: none;
+}
+
+span {
+  margin: 0 6px;
+  color: #3a5650;
+}
+
+#ageDiv, #speciesDiv {
+    text-align: left;
+}
+
+/* ===== Submit Button ===== */
+button, input[type="submit"] {
+  background-color: #6ec5b8;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover, input[type="submit"]:hover {
+  background-color: #58b0a5;
+}
+
+button:active, input[type="submit"]:active {
+  transform: scale(0.97);
+}
+
+/* ===== Result Section ===== */
+#result, #sendResult {
+  margin-top: 20px;
+  margin-bottom: 100px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c5c52;
+}
+
+#warn {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+/* ===== Articles Section ===== */
+.articles {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: space-evenly;
+    gap: 30px;
+    max-width: 90%;
+    margin: 50px 0;
+}
+
+.article {
+    border-radius: 5px;
+    box-shadow: 0 0 8px 3px rgb(212, 212, 212);
+    width: 20%;
+    min-width: 170px;
+    max-width: 220px;
+    cursor: pointer;
+    transition: box-shadow 1s ease;
+}
+
+.article:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.856);
+}
+
+.article img {
+    border-radius: 5px 5px 0 0;
+    min-width: 170px;
+    max-width: 220px;
+    width: 20vw;
+}
+
+.article h3 {
+    padding: 8px;
+}
+
+.articlep {
+  display: inline;
+  background: #ffffffcc;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  text-align: left;
+  max-width: 70vw;
+  margin: 50px;
+  height: auto;
+}
+
+.articlep a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Footer ===== */
+footer {
+  width: 100%;
+  padding: 100px 0;
+  background-color: #236f5ec4;
+  margin-top: 50px;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+a {
+  text-decoration: none;
+  font-weight: 500;
+  color: black;
+}
+
+nav a:hover {
+  color: white;
+}
+
+/* ===== Cookies ===== */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222222;
+  padding: 1em 1.5em;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  max-width: 90%;
+  z-index: 9999;
+  font-size: 0.95em;
+  text-align: center;
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.cookie-banner p {
+  color: white;
+  font-size: 0.95em;
+  padding: 0.5em;
+  margin: 0;
+}
+
+.cookie-banner p a {
+  color: #3b98bd;
+}
+
+.cookie-banner p a:hover {
+  color: #58b0a5;
+}
+
+.cookie-banner button {
+  margin-top: 0.7em;
+  margin-inline: 0.3em;
+  padding: 0.5em 0.9em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: black;
+}
+
+.btn-accept { background: #4CAF50; color: white; }
+.btn-reject { background: #f44336; color: white; }
+.btn-dismiss { background: #2196F3; color: white; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ===== Manage Cookies Button ===== */
+#manage-cookies {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: background 0.3s ease;
+}
+
+#manage-cookies:hover {
+  background: #555;
+}
+
+.hidden { display: none !important; 
+}
+
+
+
+
+/* ===== Menu Navbar ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 15px 0 0 0 ;
+  z-index: 1000;
+}
+
+/* ===== Menu Button ===== */
+.menu-btn {
+  width: 35px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.menu-btn span {
+  display: block;
+  height: 4px;
+  width: 100%;
+  background-color: #236f5f;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ===== Menu Hidden Checkbox ===== */
+.menu-toggle {
+  display: none;
+}
+
+/* ===== Menu Navigation Links ===== */
+.nav-links {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 250px;
+  height: 100vh;
+  background-color: #f0f8f6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  transition: left 0.3s ease-in-out;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links li {
+  margin: 20px 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #236f5f;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #58b0a5;
+}
+
+/* ===== When Menu is Open (checkbox checked) ===== */
+.menu-toggle:checked ~ .nav-links {
+  left: 0;
+}
+
+/* Animate hamburger to X */
+.menu-toggle:checked + .menu-btn span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.menu-toggle:checked + .menu-btn span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle:checked + .menu-btn span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+
+/* ===== Radio Tabs ===== */
+.tabs {
+  display: block;
+  width: auto;
+  margin-bottom: 20px;
+}
+
+/* Hide radio inputs */
+.tabs input[type="radio"] {
+  display: none;
+}
+
+/* Tab Labels */
+.tabsLabel {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 0px;
+  background: #eaeaea;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Hover effect */
+.tabsLabel:hover {
+  background: #d4d4d4;
+}
+
+/* Active Tab */
+.tabs input[type="radio"]:checked + label {
+  background: #58b0a5; 
+  color: black;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  background: #e8f1f0;
+  border: 2px solid #58b0a5;
+  border-radius: 0 8px 8px 8px;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Show the correct content when selected */
+#speciesTab:checked ~ #content1,
+#expectancyTab:checked ~ #content2,
+#birthdayTab:checked ~ #content4 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#ageTab:checked ~ #content3 {
+  display: block;
+}
+
+/* Subtle fade animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse {
+  animation: pulse 3s ease-in-out 0s infinite;
+}
+
+@keyframes pulse {
+  0% {box-shadow: 0 0 5px 2px gold;}
+  50% {box-shadow: none;}
+  100% {box-shadow: 0 0 5px 2px gold;}
+}
+
+/* ===== Table ===== */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 500px; /* ensures layout structure on scroll */
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  text-align: left;
+  white-space: nowrap; /* prevents text wrapping inside cells */
+}
+
+
+
+/* ===== Responsive Design ===== */
+@media (max-width: 600px) {
+  #form, form {
+    padding: 25px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+  /* Table */
+  th, td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  #form, .articles, .articlep, form {
+    width: 90%;
+    max-width: none;
+    margin: 0;
+    padding: 20px 10px;
+  }
+
+  #result, #sendResult, #warn {
+    margin-top: 0;
+  }
+
+}

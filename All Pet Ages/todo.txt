@@ -1,0 +1,14 @@
+TO DO:
+    New Favicon
+
+Reoccuring To Do:
+    Update sitemap after making changes to html files
+
+To Do Eventually:
+    Place backlinks (other websites with links to your site, social media shares, etc.)
+    Fast (Optimize images (use .webp format). Lazy-load images.)
+    Add more pets
+
+Completed:
+    Many tasks not listed here because I just started keeping a record of what was completed
+    Contact us section
