@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact us form with any questions or comments for our pet age calculator.">
+    <link rel="stylesheet" href="styleGPT.css">
+    <link rel="icon" type="image/x-icon" href="Images/Pet Age Calculator Logo (Wordless).png">
+    <title>Contact Us</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1602846243409098"
+     crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // https://dashboard.emailjs.com/admin/account
+            emailjs.init({
+              publicKey: "63wmFz1tv1YTAV-hk",
+            });
+        })();
+    </script>
+    <script type="text/javascript">
+        window.onload = function() {
+            document.getElementById('contact-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                // these IDs from the previous steps
+                emailjs.sendForm('service_a33g5sk', 'template_4rj2gip', this)
+                    .then(() => {
+                        console.log('SUCCESS!');
+                        document.getElementById('sendResult').innerHTML = "Message sent!"
+                        document.getElementById('name').value = "";
+                        document.getElementById('email').value = "";
+                        document.getElementById('message').value = "";
+                    }, (error) => {
+                        console.log('FAILED...', error);
+                        document.getElementById('sendResult').innerHTML = "Message failed to send!"
+                    });
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <!-- Navigation -->
+        <nav class="navbar">
+            <!-- Hidden checkbox -->
+            <input type="checkbox" id="menu-toggle" class="menu-toggle" />
+
+            <!-- Hamburger / X icon -->
+            <label for="menu-toggle" class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+            </label>
+
+            <!-- Navigation links -->
+            <ul class="nav-links">
+            
+            <li><a href="index.html">Pet Age Calculator</a></li>
+            <li><a href="articles.html">Articles</a></li>
+            <li><a href="privacypolicy.html">Privacy Policy</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Contact Us</h1>
+        <p>Have a question or comment for us? Is your pet not in our species list? Let us know using the form below!</p>
+        <form id="contact-form">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" maxlength="30" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message"  required></textarea>
+
+            <input type="submit" value="Send">
+        </form>
+        <div id="sendResult"></div>
+    </main>
+    <footer>
+        <nav>
+            <a href="index.html">Pet Age Calculator</a>
+            <a href="articles.html">Articles</a>
+            <a href="privacypolicy.html">Privacy Policy</a>
+        </nav>
+    </footer>
+</body>
+</html>
