@@ -18,6 +18,8 @@ const scoreList = document.getElementById("scoreList");
 const scoreBoardTable = document.getElementById("scoreBoard");
 const startButton = document.getElementById("startButton");
 const quotesDiv = document.getElementById("quotes");
+const layDownCheckboxDiv = document.getElementById("layDownCheckboxDiv");
+const layDownCheckbox = document.getElementById("layDownCheckbox");
 let numOfPlayers = 1;
 let players = [];
 let deck;
@@ -113,16 +115,8 @@ class Player{
     constructor(name){
         this.name = name;
         this.hand = [];
-        //turn boolean?
         this.score = 0;
     }
-
-    // get hand(){
-    //     return hand;
-    // }
-    // set hand(cards){
-    //     this.hand = cards;
-    // }
 }
 
 
@@ -139,7 +133,7 @@ window.addEventListener("DOMContentLoaded", loadedHandler);
 
 function loadedHandler() {       
 
-    //Submit type input listeners
+    //Score board button listener
     document.getElementById("scoreSubmit").addEventListener("click", function(){
         scoreBoardTable.hidden = "true";
     });
@@ -169,7 +163,10 @@ function loadedHandler() {
         startTable.appendChild(howManyPlayersField);
         for(let i=1; i <= numOfPlayers; ++i){
             let newPlayerRow = document.createElement("tr");
-            newPlayerRow.innerHTML = "<td>Player " + i +"'s Name:</td></tr><tr><td><input type='text' maxlength='20'></td>"
+            newPlayerRow.innerHTML = "<td>Player " + i +"'s Name:</td>";
+            startTable.appendChild(newPlayerRow);
+            newPlayerRow = document.createElement("tr");
+            newPlayerRow.innerHTML = "<td><input type='text' maxlength='20'></td>";
             startTable.appendChild(newPlayerRow);
         }
         errorGivenForNames = false;
@@ -292,6 +289,9 @@ function revealingHand(){
         alert.innerHTML = "This is your last turn! " + playerWhoLayedDown.name + " has layed down."; 
         alert.classList.add("alert");
         handDiv.appendChild(alert);
+        //This div allows the alert to be on its own line
+        let div = document.createElement("div");
+        handDiv.appendChild(div);
     }
     
     let revealHand = document.createElement("input");
@@ -398,6 +398,9 @@ function drawDiscard(){
 }
 
 function showHand(clickable){
+    layDownCheckboxDiv.removeAttribute("hidden");
+    handDiv.style.marginTop = "50px";
+
     handDiv.innerHTML = "<h3>Your Cards</h3>";
     
     for(let c=0; c < interactingPlayer.hand.length; c++){
@@ -416,7 +419,7 @@ function showHand(clickable){
         }
     }
 
-    layDownCheck();
+    console.log(layDownCheck());
 }
 
 function selected(index){
@@ -449,13 +452,13 @@ function selected(index){
                     discard.push(interactingPlayer.hand.splice(index, 1)[0]); //splice returns an array
                     drawDiscard(); 
                     cardHighlighted = false;
-                    showHand(); //delete this function call once switchPlayers is implented.
 
                     if(playerHasLayedDown){
                         console.log("add points here maybe?");
                     }
                     else if(layDownCheck()){    
-                        let endRound = window.confirm("Can you lay down?");
+                        console.log(layDownCheckbox.checked);
+                        let endRound = layDownCheckbox.checked;
                         if(endRound){
                             playerWhoLayedDown = interactingPlayer;
                             playerHasLayedDown = true;
@@ -473,13 +476,13 @@ function selected(index){
                     discard.push(interactingPlayer.hand.splice(index, 1)[0]); //splice returns an array
                     drawDiscard(); 
                     cardHighlighted = false;
-                    showHand(); //delete this function call once switchPlayers is implented.
                     
                     if(playerHasLayedDown){
                         console.log("add points here maybe?");
                     }
                     else if(layDownCheck()){    
-                        let endRound = window.confirm("Can you lay down?");
+                        console.log(layDownCheckbox.checked);
+                        let endRound = layDownCheckbox.checked;
                         if(endRound){
                             playerWhoLayedDown = interactingPlayer;
                             playerHasLayedDown = true;
@@ -617,6 +620,9 @@ function switchPlayers(){
     interactingPlayer = players[playsFirst];
 
     //hide previous players hand
+    layDownCheckboxDiv.style.display = "hidden";
+    layDownCheckboxDiv.hidden = "true";
+    handDiv.style.marginTop = "250px";
     handDiv.innerHTML = "<h3>Your Cards</h3>";
 
     //update infomation
@@ -637,12 +643,251 @@ function switchPlayers(){
 
 
 
+function endRound(){
+    console.log("round has ended");
+    //update scores
+    console.log(players.length);
+    for(let x=0; x<players.length; x++){
+        if(playerWhoLayedDown.name == players[x].name){
+            players[x].score += 0;
+        }
+        else{
+//TO-DO: change to give appropriate scores...***************************
+            players[x].score += 10;
+        }
+
+
+        let tdScore = document.createElement("td");
+        tdScore.innerHTML = players[x].score;
+        document.getElementById("round"+round).appendChild(tdScore);
+    }
+
+    playerHasLayedDown = false;
+
+    //check for end of game
+    if(round == 14){
+        endGame();
+    }//start next round
+    else{
+        round++;
+        //clear player hand and put back in deck and shuffle
+        for(let x=0; x < players.length; x++){
+            for(let y=0; y<round-1; y++){
+                deck.cards.push(players[x].hand.pop());
+            }
+        }
+        while(discard.length > 0){
+            deck.cards.push(discard.pop());
+        }
+        console.log(deck);
+        deck.shuffle();
+        scoreBoardTable.removeAttribute("hidden");
+        startRound();
+        revealingHand();
+    }
+}
+
+function endGame(){
+    console.log("Game Over");
+    //display winner and scores
+    deckDiv.hidden = "true";
+    discardDiv.hidden = "true";
+    playersDiv.hidden = "true";
+    handDiv.hidden = "true";
+    scoreBoardTable.removeAttribute("hidden");
+
+    let winner = players[0];
+    for(let x=1; x<players.length; x++){
+        if(players[x].score < winner.score){
+            winner = players[x];
+        }
+    }
+    infoDiv.innerHTML = winner.name + " Wins! Congrats!"
+
+    //show play again option
+    let sS= document.getElementById("scoreSubmit")
+    sS.value = "Play Again?";
+    sS.addEventListener("click", function(){
+        infoDiv.innerHTML = " ";
+        sS.value = "Continue Playing";
+        startDiv.classList.add("start");
+        startDiv.fontSize = "3em";
+        startDiv.innerHTML = '<div id="startButton">START</div>';
+        loadedHandler();
+    })
+}
 
 
 
 
 
-function layDownCheck(){
+
+
+
+
+
+
+
+
+
+
+function determineScore(combo){
+    let score = 0;
+    // let inverseIndices = [];
+    // //Finding inverse indices
+    // for(let b=0; b<interactingPlayer.hand.length; b++){
+    //     let hasIndex = false;
+    //     for(let a=0; a<combo.indices.length; a++){
+    //         if(combo.indices[a] == b){
+    //             hasIndex = true;
+    //         }
+    //     }
+    //     if(hasIndex == false){
+    //         inverseIndices.push(b);
+    //     }
+    // }
+
+    // console.log(combo.indices);
+    // console.log(inverseIndices);
+
+    // for(let x=0; x<inverseIndices.length; x++){
+    //     if(interactingPlayer.hand[combo.indices[x]].rank == 'Joker' || interactingPlayer.hand[combo.indices[x]].rank == round){
+    //         score += 20;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank < 10){
+    //         score += 5;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank == 14){
+    //         score += 15;
+    //     }
+    //     else if(interactingPlayer.hand[combo.indices[x]].rank >= 10){
+    //         score += 10;
+    //     }
+    // }
+    // combo.points = score;
+    console.log(score);
+}
+
+
+
+
+
+
+
+// Helper function to get card value
+function cardValue(card) {
+    return card[3];  
+}
+
+// Helper function to get card suit
+function cardSuit(card) {
+    return card[2];
+}
+
+// Helper function to check if a card is wild
+function isWild(card, wildValue) {
+    return cardValue(card) === wildValue;
+}
+
+// Function to check if a group of cards forms a run
+function isRun(cards) {
+    const sortedCards = cards.slice().sort((a, b) => cardValue(a) - cardValue(b));
+    const suit = cardSuit(sortedCards[0]);
+    for (let i = 1; i < sortedCards.length; i++) {
+        if (cardSuit(sortedCards[i]) !== suit || cardValue(sortedCards[i]) !== cardValue(sortedCards[i - 1]) + 1) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Function to check if a group of cards forms a set
+function isSet(cards) {
+    const valueCount = {};
+    cards.forEach(card => {
+        const value = cardValue(card);
+        valueCount[value] = (valueCount[value] || 0) + 1;
+    });
+    return Object.values(valueCount).some(count => count >= 3);
+}
+
+// Function to get all possible groups of cards
+function getGroups(cards) {
+    const groups = [];
+    const n = cards.length;
+
+    for (let r = 3; r <= n; r++) {
+        for (let i = 0; i < (1 << n); i++) {
+            if (countBits(i) === r) {
+                const combo = [];
+                for (let j = 0; j < n; j++) {
+                    if (i & (1 << j)) {
+                        combo.push(cards[j]);
+                    }
+                }
+                if (combo.length === r) {
+                    if (isSet(combo) || isRun(combo)) {
+                        groups.push(combo);
+                    }
+                }
+            }
+        }
+    }
+    return groups;
+}
+
+// Helper function to count bits (for generating combinations)
+function countBits(num) {
+    return num.toString(2).split('1').length - 1;
+}
+
+// Function to check if the cards can be partitioned into valid groups
+function canPartition(cards, groupSize) {
+    if (cards.length === 0) {
+        return true;
+    }
+
+    const groups = getGroups(cards);
+    for (const group of groups) {
+        if (group.length >= groupSize) {
+            const remainingCards = cards.slice();
+            group.forEach(card => {
+                const index = remainingCards.indexOf(card);
+                if (index !== -1) remainingCards.splice(index, 1);
+            });
+            if (canPartition(remainingCards, groupSize)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Main function to check if a hand is valid for a given round
+function layDownCheck() {
+    const wildValue = round.toString();
+    const filteredHand = interactingPlayer.hand.filter(card => !isWild(card, wildValue));
+
+    if (round === 11) {
+        if (filteredHand.length !== 14) {
+            return false;
+        }
+        return canPartition(filteredHand, 3);
+    }
+
+    if (filteredHand.length < (round - 1)) {
+        return false;
+    }
+
+    return canPartition(filteredHand, 3);
+}
+
+
+
+
+
+function layDownCheck_old(){
+    console.log(interactingPlayer.hand);
     return true;
     // //copy the players hand
     // // let handDup = [];
@@ -898,115 +1143,4 @@ function setsCheck(sets, runs, wildIndices){  //these are arrays of arrays conta
 
 
     return true;
-}
-
-function determineScore(combo){
-    let score = 0;
-    // let inverseIndices = [];
-    // //Finding inverse indices
-    // for(let b=0; b<interactingPlayer.hand.length; b++){
-    //     let hasIndex = false;
-    //     for(let a=0; a<combo.indices.length; a++){
-    //         if(combo.indices[a] == b){
-    //             hasIndex = true;
-    //         }
-    //     }
-    //     if(hasIndex == false){
-    //         inverseIndices.push(b);
-    //     }
-    // }
-
-    // console.log(combo.indices);
-    // console.log(inverseIndices);
-
-    // for(let x=0; x<inverseIndices.length; x++){
-    //     if(interactingPlayer.hand[combo.indices[x]].rank == 'Joker' || interactingPlayer.hand[combo.indices[x]].rank == round){
-    //         score += 20;
-    //     }
-    //     else if(interactingPlayer.hand[combo.indices[x]].rank < 10){
-    //         score += 5;
-    //     }
-    //     else if(interactingPlayer.hand[combo.indices[x]].rank == 14){
-    //         score += 15;
-    //     }
-    //     else if(interactingPlayer.hand[combo.indices[x]].rank >= 10){
-    //         score += 10;
-    //     }
-    // }
-    // combo.points = score;
-    console.log(score);
-}
-
-function endRound(){
-    console.log("round has ended");
-    //update scores
-    console.log(players.length);
-    for(let x=0; x<players.length; x++){
-        if(playerWhoLayedDown.name == players[x].name){
-            players[x].score += 0;
-        }
-        else{
-//TO-DO: change to give appropriate scores...***************************
-            players[x].score += 10;
-        }
-
-
-        let tdScore = document.createElement("td");
-        tdScore.innerHTML = players[x].score;
-        document.getElementById("round"+round).appendChild(tdScore);
-    }
-
-    playerHasLayedDown = false;
-
-    //check for end of game
-    if(round == 14){
-        endGame();
-    }//start next round
-    else{
-        round++;
-        //clear player hand and put back in deck and shuffle
-        for(let x=0; x < players.length; x++){
-            for(let y=0; y<round-1; y++){
-                deck.cards.push(players[x].hand.pop());
-            }
-        }
-        while(discard.length > 0){
-            deck.cards.push(discard.pop());
-        }
-        console.log(deck);
-        deck.shuffle();
-        scoreBoardTable.removeAttribute("hidden");
-        startRound();
-        revealingHand();
-    }
-}
-
-function endGame(){
-    console.log("Game Over");
-    //display winner and scores
-    deckDiv.hidden = "true";
-    discardDiv.hidden = "true";
-    playersDiv.hidden = "true";
-    handDiv.hidden = "true";
-    scoreBoardTable.removeAttribute("hidden");
-
-    let winner = players[0];
-    for(let x=1; x<players.length; x++){
-        if(players[x].score < winner.score){
-            winner = players[x];
-        }
-    }
-    infoDiv.innerHTML = winner.name + " Wins! Congrats!"
-
-    //show play again option
-    let sS= document.getElementById("scoreSubmit")
-    sS.value = "Play Again?";
-    sS.addEventListener("click", function(){
-        infoDiv.innerHTML = " ";
-        sS.value = "Continue Playing";
-        startDiv.classList.add("start");
-        startDiv.fontSize = "3em";
-        startDiv.innerHTML = '<div id="startButton">START</div>';
-        loadedHandler();
-    })
 }
